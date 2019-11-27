@@ -1,0 +1,62 @@
+{
+  "name": "sse.io-server-nodejs",
+  "version": "1.0.0",
+  "description": "NodeJS server for SSE-IO",
+  "main": "lib/index.js",
+  "scripts": {
+    "test": "jest --coverage --forceExit --detectOpenHandles",
+    "clean": "rimraf lib && rimraf coverage",
+    "lint": "tslint --project tsconfig.json --force --format verbose \"{src,__tests__}/**/*.ts\"",
+    "prepublishOnly": "npm run build",
+    "prebuild": "npm run clean && npm run lint && echo Using TypeScript && tsc --version",
+    "build": "tsc --pretty"
+  },
+  "keywords": [
+    "sse"
+  ],
+  "author": "nEoYe",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/debug": "^4.1.5",
+    "@types/jest": "^24.0.23",
+    "@types/lodash": "^4.14.149",
+    "@types/node": "^12.12.7",
+    "axios": "^0.19.0",
+    "eventsource": "^1.0.7",
+    "jest": "^24.9.0",
+    "rimraf": "^3.0.0",
+    "shimo-guid": "^1.0.2",
+    "sse.io-client": "^1.1.1",
+    "ts-jest": "^24.1.0",
+    "ts-node": "^8.5.2",
+    "tslint": "^5.20.1",
+    "tslint-config-airbnb": "^5.11.2",
+    "typescript": "^3.7.2"
+  },
+  "dependencies": {
+    "bluebird": "^3.7.1",
+    "debug": "^4.1.1",
+    "lodash": "^4.17.15",
+    "matchit": "^1.0.8",
+    "once": "^1.4.0"
+  },
+  "jest": {
+    "transform": {
+      ".(ts)": "ts-jest"
+    },
+    "testPathIgnorePatterns": [
+      "<rootDir>/__tests__/helpers/*"
+    ],
+    "testRegex": "(/__tests__/.*\\-spec)\\.(ts|js)$",
+    "moduleFileExtensions": [
+      "ts",
+      "js"
+    ],
+    "testEnvironment": "node",
+    "globals": {
+      "ts-jest": {
+        "diagnostics": false
+      }
+    }
+  }
+}
