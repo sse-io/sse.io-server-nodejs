@@ -9,7 +9,49 @@ import { genEventSourceUrl } from './helpers/utils';
 const shimoGuid = require('shimo-guid');
 const bluebird = require('bluebird');
 
-describe('should server works normally when attach sse.io to a plain NodeJS HTTP server', () => {
+describe('should sse server works normally in standalone mode', () => {
+  beforeAll(() => {
+    const sseServer = sseio.newServer({ path: PATH });
+    this.eventHandler = sseServer.registerEventHandler(EVENTS.TEST_NORMAL, {
+      getRoomId: (context): string => {
+        return context.params.guid;
+      },
+    });
+    this.server = sseServer.listen(PORT);
+    this.sseServer = sseServer;
+  });
+
+  afterAll(done => {
+    this.server.close(done);
+  });
+
+  beforeEach(() => {
+    this.guid = shimoGuid.new();
+    this.client = sseioClient.client(genEventSourceUrl(this.guid), [
+      EVENTS.TEST_NORMAL,
+    ]);
+    this.client.start();
+  });
+
+  afterEach(() => {
+    this.client.stop();
+  });
+
+  it('should send sse message works normally', done => {
+    const message = 'standalone mode';
+    this.sseServer.on('conn:create', () => {
+      this.eventHandler.send(this.guid, message);
+    });
+
+    this.client.on('message', data => {
+      expect(data.event).toEqual(EVENTS.TEST_NORMAL);
+      expect(data.message).toEqual(message);
+      done();
+    });
+  });
+});
+
+describe('should sse server works normally when attach sse.io to a plain NodeJS HTTP server', () => {
   describe('can http server also handle requests expect for sse', () => {
     beforeAll(done => {
       const server = http.createServer((req, res) => {
