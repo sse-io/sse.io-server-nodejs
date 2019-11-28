@@ -42,7 +42,7 @@ sseServer.listen(3000);
 ### In conjunction with Koa
 
 ```js
-const app = require('koa')();
+const app = new require('koa')();
 const server = require('http').createServer(app.callback());
 
 const sseServer = sseio.newServer(server, {
