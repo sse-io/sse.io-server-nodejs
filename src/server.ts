@@ -2,7 +2,7 @@ import http, { Server } from 'http';
 import { PassThrough } from 'stream';
 import url from 'url';
 import * as _ from 'lodash';
-import EventEmitter from 'events';
+import { EventEmitter } from 'events';
 import _debug from 'debug';
 
 import ClientManager from './clientManager';

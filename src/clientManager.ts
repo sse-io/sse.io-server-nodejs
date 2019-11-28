@@ -1,14 +1,11 @@
 import { PassThrough } from 'stream';
-import EventEmitter from 'events';
 
 import Client from './client';
 
-export default class ClientManager extends EventEmitter {
+export default class ClientManager {
   private clients: Map<string, Client> = new Map<string, Client>();
 
-  constructor() {
-    super();
-  }
+  constructor() {}
 
   public getClient(id: string): Client | undefined {
     return this.clients.get(id);

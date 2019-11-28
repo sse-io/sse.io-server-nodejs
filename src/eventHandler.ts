@@ -1,4 +1,4 @@
-import EventEmitter from 'events';
+import { EventEmitter } from 'events';
 
 import { sseContext } from './types';
 import ClientManager from './clientManager';
