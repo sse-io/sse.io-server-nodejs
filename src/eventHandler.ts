@@ -1,11 +1,12 @@
 import { EventEmitter } from 'events';
 
-import { sseContext } from './types';
+import { sseContext, IRegisterOptions } from './types';
 import ClientManager from './clientManager';
 import { EVENTS } from './constants';
 
 export default class EventHandler extends EventEmitter {
   public getRoomId: (context: sseContext) => string;
+  public fetch: ((context: sseContext) => Promise<any>) | undefined;
 
   private roomClients: Map<string, Set<string>> = new Map<string, Set<string>>();
   private event: string;
@@ -14,12 +15,16 @@ export default class EventHandler extends EventEmitter {
   constructor(
     event: string,
     clientManager: ClientManager,
-    getRoomId: (context: sseContext) => string
+    options: IRegisterOptions,
   ) {
     super();
     this.event = event;
-    this.getRoomId = getRoomId;
+    this.getRoomId = options.getRoomId;
     this.clientManager = clientManager;
+
+    if (options.fetch) {
+      this.fetch = options.fetch;
+    }
   }
 
   public async send(roomId: string, message: any) {
