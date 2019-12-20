@@ -1,6 +1,6 @@
 {
   "name": "sse.io-server-nodejs",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "NodeJS server for SSE-IO",
   "main": "lib/index.js",
   "scripts": {
