@@ -7,17 +7,12 @@ import _debug from 'debug';
 
 import ClientManager from './clientManager';
 import EventHandler from './eventHandler';
-import { sseContext } from './types';
+import { sseContext, IRegisterOptions } from './types';
 import Client from './client';
 import { EVENTS } from './constants';
 
 const debug = _debug('sse-io-server');
 const matchit = require('matchit');
-
-export type IRegisterOptions = {
-  getRoomId: (context: sseContext) => string;
-  fetch?: (context: sseContext) => Promise<any>;
-};
 
 export type IOptions = {
   path?: string;
@@ -32,7 +27,6 @@ export default class SSEServer extends EventEmitter {
   private urlMatchRes: any[] = [];
   private eventHandlers: Map<string, EventHandler> = new Map<string, EventHandler>();
   private clientManager: ClientManager;
-  private fetch: ((context: sseContext) => Promise<any>) | undefined;
 
   constructor(options: IOptions) {
     super();
@@ -48,13 +42,13 @@ export default class SSEServer extends EventEmitter {
     const eventHandler = new EventHandler(
       event,
       this.clientManager,
-      options.getRoomId
+      {
+        getRoomId: options.getRoomId,
+        fetch: options.fetch
+      }
     );
-    this.eventHandlers.set(event, eventHandler);
-    if (options.fetch) {
-      this.fetch = options.fetch;
-    }
 
+    this.eventHandlers.set(event, eventHandler);
     return eventHandler;
   }
 
@@ -161,12 +155,12 @@ export default class SSEServer extends EventEmitter {
     for (const event of events) {
       const handler = this.eventHandlers.get(event);
       if (handler) {
-        if (this.fetch) {
+        if (handler.fetch) {
           client.fetching = true;
           const promise = new Promise(async (resolve, reject) => {
             try {
               // @ts-ignore
-              const message = await this.fetch(context);
+              const message = await handler.fetch(context);
               if (message) {
                 let payload = message;
                 if (!(message instanceof String)) {
