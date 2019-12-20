@@ -1,6 +1,6 @@
 import { Server } from 'http';
-
-import SSEServer, { IOptions, IRegisterOptions } from './server';
+import { IRegisterOptions } from './types';
+import SSEServer, { IOptions } from './server';
 
 export function newServer(
   server: Server | IOptions,
